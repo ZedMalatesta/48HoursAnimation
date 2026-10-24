@@ -41,6 +41,7 @@ export function initEditor({ onReplay, onCaret }) {
   const imageInput = document.getElementById('doc-image-input');
 
   restoreSaved();
+  fitImages();
   document.execCommand('styleWithCSS', false, true);
   // No drag-to-resize handles (Firefox): photos always stay at the medium size.
   document.execCommand('enableObjectResizing', false, false);
@@ -190,6 +191,15 @@ export function initEditor({ onReplay, onCaret }) {
     return range;
   }
 
+  // Copied or pasted photos often carry their own size; drop it so every photo uses the medium box.
+  function fitImages() {
+    for (const img of doc.querySelectorAll('img[style], img[width], img[height]')) {
+      img.removeAttribute('style');
+      img.removeAttribute('width');
+      img.removeAttribute('height');
+    }
+  }
+
   imageInput.addEventListener('change', () => {
     insertImages(imageInput.files);
     imageInput.value = '';
@@ -242,7 +252,10 @@ export function initEditor({ onReplay, onCaret }) {
     }
   }
 
-  doc.addEventListener('input', changed);
+  doc.addEventListener('input', () => {
+    fitImages();
+    changed();
+  });
   title.addEventListener('input', () => {
     document.title = `${title.value || 'Untitled report'} – Civic Docs`;
     changed();

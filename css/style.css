@@ -38,50 +38,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Masthead ---------------------------------------------------------------- */
-
-.masthead {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 24px;
-  padding: max(16px, env(safe-area-inset-top)) var(--gutter) 16px;
-  background: #0b0b0c;
-  text-transform: uppercase;
-}
-
-.masthead__title {
-  margin-right: -0.28em;
-  font-weight: 800;
-  font-size: clamp(0.85rem, 2.6vw, 1.35rem);
-  letter-spacing: 0.28em;
-}
-
-.masthead__bureau {
-  margin-right: -0.18em;
-  color: var(--yellow);
-  font-weight: 700;
-  font-size: clamp(0.6rem, 1.6vw, 0.8rem);
-  letter-spacing: 0.18em;
-}
-
-@media (max-width: 560px) {
-  .masthead {
-    justify-content: center;
-    text-align: center;
-  }
-}
-
 /* Hero: sunburst, slogan and the eye ------------------------------------- */
 
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: clamp(28px, 6vw, 56px) var(--gutter) clamp(48px, 9vw, 96px);
+  padding: calc(clamp(28px, 6vw, 56px) + env(safe-area-inset-top)) var(--gutter) clamp(48px, 9vw, 96px);
   background: var(--red);
   text-align: center;
 }
@@ -461,10 +424,6 @@ body {
   pointer-events: none;
 }
 
-.is-live .masthead {
-  animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both;
-}
-
 .is-live .rays {
   animation:
     rays-in 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both,
@@ -477,12 +436,6 @@ body {
 
 .is-live .slogan__report {
   animation: slam 0.65s cubic-bezier(0.3, 0.7, 0.3, 1) 0.75s both;
-}
-
-@keyframes drop-in {
-  from {
-    transform: translateY(-100%);
-  }
 }
 
 @keyframes rays-in {

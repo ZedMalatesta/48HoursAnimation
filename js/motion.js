@@ -3,6 +3,7 @@ export const lerp = (a, b, t) => a + (b - a) * t;
 
 export const ease = {
   linear: t => t,
+  inBack: t => t * t * (2 * t - 1),
   outCubic: t => 1 - (1 - t) ** 3,
   inOutCubic: t => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2),
   outBack: t => 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2,

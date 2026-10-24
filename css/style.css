@@ -419,3 +419,100 @@ body {
     opacity: 0;
   }
 }
+
+.is-approaching .boot__status,
+.is-approaching .boot__hint,
+.boot.is-approaching::before {
+  opacity: 0;
+}
+
+/* Opening the app ---------------------------------------------------------- */
+
+#app {
+  position: relative;
+  z-index: 1;
+}
+
+/* Once the reveal starts the overlay drops behind the (clipped) app. */
+.boot.is-under {
+  z-index: 0;
+}
+
+.reveal-ring {
+  position: fixed;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  z-index: 60;
+  width: var(--d, 0px);
+  height: var(--d, 0px);
+  margin: calc(var(--d, 0px) / -2) 0 0 calc(var(--d, 0px) / -2);
+  border: 6px solid var(--yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 48px rgb(255 184 61 / 0.45), inset 0 0 48px rgb(255 184 61 / 0.25);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-live .masthead {
+  animation: drop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.35s both;
+}
+
+.is-live .rays {
+  animation:
+    rays-in 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    rays-turn 40s linear 1.6s infinite;
+}
+
+.is-live .slogan__see {
+  animation: slam 0.65s cubic-bezier(0.3, 0.7, 0.3, 1) 0.5s both;
+}
+
+.is-live .slogan__report {
+  animation: slam 0.65s cubic-bezier(0.3, 0.7, 0.3, 1) 0.75s both;
+}
+
+@keyframes drop-in {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes rays-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-45deg) scale(0.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+}
+
+/* One ray period, so the loop is seamless. */
+@keyframes rays-turn {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(22.5deg);
+  }
+}
+
+@keyframes slam {
+  0% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

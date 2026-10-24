@@ -3,7 +3,9 @@ import { Timeline, clamp, ease, lerp, spring } from './motion.js';
 
 /**
  * Boot sequence, like an app launching: the eye drops in oversized and settles,
- * wakes up and scans the viewer. Tap, click or any key skips it.
+ * wakes up and scans the viewer, then rushes toward them until its pupil
+ * swallows the screen. Resolves on a dark screen, ready for the app to open.
+ * Tap, click or any key skips it.
  */
 export async function playIntro(boot, rating) {
   const stage = boot.querySelector('.boot__stage');
@@ -68,6 +70,13 @@ export async function playIntro(boot, rating) {
   progress(1);
   await blink();
   await tl.wait(350);
+
+  // 5. Pull back a touch, then rush at the viewer as the pupil dilates to fill the screen.
+  boot.classList.add('is-approaching');
+  await tl.tween(1100, (p, t) => {
+    stage.style.transform = `scale(${18 ** p})`;
+    eye.set({ pupil: lerp(1, 2.2, ease.outCubic(t)) });
+  }, ease.inBack);
 
   boot.removeEventListener('pointerdown', skip);
   window.removeEventListener('keydown', skip);

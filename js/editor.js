@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'civic-docs:report';
+const STORAGE_KEY = 'civic-docs:report:v2';
 const MAC = /Mac|iPhone|iPad/.test(navigator.platform);
 const MOD = MAC ? '⌘' : 'Ctrl+';
 
@@ -104,7 +104,10 @@ export function initEditor({ onReplay, onCaret }) {
       const url = prompt('Link to', 'https://');
       if (url) exec('createLink', url);
     },
-    image: () => imageInput.click(),
+    image() {
+      pendingSlot = null;
+      imageInput.click();
+    },
     date: () => exec('insertText',new Date().toLocaleDateString(undefined, { dateStyle: 'long' })),
     new() {
       if (!confirm('Start a blank report? The current text will be cleared.')) return;
@@ -157,7 +160,27 @@ export function initEditor({ onReplay, onCaret }) {
 
   // Images: picked from the file manager, dropped or pasted
 
-  async function insertImages(files, range = savedRange) {
+  // A photo slot in the document (e.g. "Photo of a suspect") is replaced by the photo chosen for it.
+  let pendingSlot = null;
+
+  function pickForSlot(slot) {
+    pendingSlot = slot;
+    imageInput.click();
+  }
+
+  doc.addEventListener('click', e => {
+    const slot = e.target.closest('.doc-photo-slot');
+    if (slot) pickForSlot(slot);
+  });
+  doc.addEventListener('keydown', e => {
+    const slot = e.target.closest?.('.doc-photo-slot');
+    if (slot && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      pickForSlot(slot);
+    }
+  });
+
+  async function insertImages(files, range = savedRange, slot = null) {
     const images = [...files].filter(f => f.type.startsWith('image/'));
     if (!images.length) return;
     const html = [];
@@ -172,6 +195,12 @@ export function initEditor({ onReplay, onCaret }) {
       }
     }
     if (!html.length) return;
+    // The browser won't delete a non-editable slot through insertHTML, so take it out first.
+    if (slot && doc.contains(slot)) {
+      range = document.createRange();
+      range.setStartBefore(slot);
+      slot.remove();
+    }
     savedRange = range ?? endOfDocument();
     exec('insertHTML', html.join(''));
   }
@@ -201,7 +230,9 @@ export function initEditor({ onReplay, onCaret }) {
   }
 
   imageInput.addEventListener('change', () => {
-    insertImages(imageInput.files);
+    const slot = pendingSlot && doc.contains(pendingSlot) ? pendingSlot : null;
+    pendingSlot = null;
+    insertImages(imageInput.files, undefined, slot);
     imageInput.value = '';
   });
   doc.addEventListener('dragover', e => {
@@ -210,7 +241,8 @@ export function initEditor({ onReplay, onCaret }) {
   doc.addEventListener('drop', e => {
     if (!e.dataTransfer?.files.length) return;
     e.preventDefault();
-    insertImages(e.dataTransfer.files, rangeAtPoint(e.clientX, e.clientY));
+    const slot = e.target.closest?.('.doc-photo-slot');
+    insertImages(e.dataTransfer.files, rangeAtPoint(e.clientX, e.clientY), slot);
   });
   doc.addEventListener('paste', e => {
     const files = [...(e.clipboardData?.files ?? [])];

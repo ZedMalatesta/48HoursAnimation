@@ -644,6 +644,57 @@ body {
   object-position: left center;
 }
 
+.docs-page .doc-display {
+  margin-top: 1.2em;
+  font-size: 2.4em;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+/* Placeholder that a chosen photo replaces; sized like a photo that fills the text area. */
+.doc-photo-slot {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  max-height: var(--text-height);
+  margin: 0.6em 0 1em;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed #9aa0a6;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: var(--muted);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.doc-photo-slot:hover,
+.doc-photo-slot:focus-visible {
+  border-color: var(--accent);
+  background: #fff6f4;
+  color: var(--accent);
+  outline: none;
+}
+
+.doc-photo-slot svg {
+  width: 48px;
+  height: 48px;
+  fill: currentColor;
+}
+
+.doc-photo-slot span {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.doc-photo-slot small {
+  font-size: 0.85em;
+}
+
 .docs-page a {
   color: #1a56c4;
 }

@@ -21,9 +21,16 @@ export function spring(duration, { stiffness = 120, damping = 12, mass = 1 } = {
   };
 }
 
-/** rAF tweens that can be cancelled together; cancelling fast-forwards every tween to its end state. */
+/**
+ * rAF tweens that can be cancelled together; cancelling fast-forwards every tween to its end state.
+ * `pace` stretches every duration (2 = half speed).
+ */
 export class Timeline {
   cancelled = false;
+
+  constructor(pace = 1) {
+    this.pace = pace;
+  }
 
   cancel() {
     this.cancelled = true;
@@ -33,7 +40,7 @@ export class Timeline {
     return new Promise(resolve => {
       const start = performance.now();
       const frame = now => {
-        const t = this.cancelled ? 1 : clamp((now - start) / duration);
+        const t = this.cancelled ? 1 : clamp((now - start) / (duration * this.pace));
         update(easing(t), t);
         if (t < 1) requestAnimationFrame(frame);
         else resolve();

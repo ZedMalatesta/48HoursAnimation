@@ -1,6 +1,9 @@
 import { createEye, ratingLabel } from './eye.js';
 import { Timeline, clamp, ease, lerp, spring } from './motion.js';
 
+// Stretches the whole boot sequence; 1 is the original timing.
+const INTRO_PACE = 1.4;
+
 /**
  * Boot sequence, like an app launching: the eye drops in oversized and settles,
  * wakes up and scans the viewer, then rushes toward them until its pupil
@@ -12,7 +15,7 @@ export async function playIntro(boot, rating) {
   const line = boot.querySelector('.boot__line');
   const bar = boot.querySelector('.boot__bar span');
   const eye = createEye(boot.querySelector('svg'));
-  const tl = new Timeline();
+  const tl = new Timeline(INTRO_PACE);
 
   const skip = () => {
     if (tl.cancelled) return;

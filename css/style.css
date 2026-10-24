@@ -568,8 +568,6 @@ body {
 .docs-page {
   --margin: 96px;
   --text-height: calc(1056px - 2 * var(--margin));
-  --photo-width: 50%;
-  --photo-height: 420px;
   width: min(100%, 816px);
   min-height: 1056px;
   margin: 0 auto;
@@ -634,16 +632,13 @@ body {
   text-align: right;
 }
 
-/* Every photo gets the same medium box: half the text width, never the full page.
-   It is never wider or taller than the page's text area (the page inside its margins)
-   nor taller than the screen; tall photos keep their shape inside the box. */
+/* Photos fit the page's text area: as wide as the space between the margins and
+   at most as tall as the page's text height, keeping their shape. */
 .docs-page img {
   display: block;
-  width: var(--photo-width);
-  max-width: 100%;
+  width: 100%;
   height: auto;
-  max-height: min(var(--photo-height), var(--text-height), calc(100vh - 160px));
-  max-height: min(var(--photo-height), var(--text-height), calc(100dvh - 160px));
+  max-height: var(--text-height);
   margin: 0.6em 0;
   object-fit: contain;
   object-position: left center;
@@ -705,9 +700,7 @@ body {
   }
 
   .docs-page {
-    --text-height: 360px;
-    --photo-width: 72%;
-    --photo-height: 360px;
+    --text-height: calc(100vh - 160px);
     width: 100%;
     min-height: 0;
     padding: 24px max(20px, env(safe-area-inset-left)) calc(56px + env(safe-area-inset-bottom));
@@ -849,6 +842,15 @@ body {
 @keyframes pop {
   from {
     transform: scale(0);
+  }
+}
+
+/* On phones the page has no fixed height, so the visible screen is the limit. */
+@supports (height: 100dvh) {
+  @media (max-width: 720px) {
+    .docs-page {
+      --text-height: calc(100dvh - 160px);
+    }
   }
 }
 

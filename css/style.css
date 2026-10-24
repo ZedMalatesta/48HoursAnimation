@@ -302,3 +302,120 @@ body {
   margin-top: 10px;
   color: var(--yellow);
 }
+
+/* Boot overlay: the app-launch intro ------------------------------------- */
+
+.boot {
+  display: none;
+}
+
+.js .boot {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--ink);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.boot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgb(155 16 14 / 0.45), transparent 60%);
+  transition: opacity 0.8s ease;
+}
+
+.boot__stage {
+  position: relative;
+  width: min(86vw, 720px, 94vh);
+  opacity: 0;
+  will-change: transform;
+}
+
+.boot__status {
+  position: absolute;
+  right: 0;
+  bottom: calc(12vh + env(safe-area-inset-bottom));
+  left: 0;
+  padding: 0 var(--gutter);
+  text-align: center;
+  transition: opacity 0.4s ease;
+}
+
+.boot__brand {
+  margin: 0 -0.42em 0 0;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+
+.boot__line {
+  min-height: 1.3em;
+  margin: 10px 0 0;
+  color: var(--yellow);
+  font: 700 0.78rem var(--mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.boot__line::after {
+  content: "_";
+  animation: cursor 0.8s steps(1) infinite;
+}
+
+.boot__bar {
+  width: min(240px, 60vw);
+  height: 2px;
+  margin: 14px auto 0;
+  background: rgb(255 255 255 / 0.14);
+}
+
+.boot__bar span {
+  display: block;
+  height: 100%;
+  background: var(--yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.boot__hint {
+  position: absolute;
+  right: 0;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  left: 0;
+  margin: 0;
+  color: rgb(255 255 255 / 0.32);
+  font: 400 0.65rem var(--mono);
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.4s ease;
+}
+
+.is-skipping .boot__status,
+.is-skipping .boot__hint {
+  opacity: 0;
+}
+
+.is-skipping .boot__stage {
+  opacity: 0 !important;
+  transition: opacity 0.25s ease;
+}
+
+.js .is-booting {
+  overflow: hidden;
+}
+
+@keyframes cursor {
+  50% {
+    opacity: 0;
+  }
+}

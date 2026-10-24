@@ -630,6 +630,18 @@ body {
   text-align: right;
 }
 
+/* Every photo gets the same medium box: half the page wide, never the full width.
+   Tall photos are capped in height and keep their shape inside the box. */
+.docs-page img {
+  display: block;
+  width: 50%;
+  height: auto;
+  max-height: 420px;
+  margin: 0.6em 0;
+  object-fit: contain;
+  object-position: left center;
+}
+
 .docs-page a {
   color: #1a56c4;
 }
@@ -682,6 +694,11 @@ body {
 
   .docs-canvas {
     padding: 0;
+  }
+
+  .docs-page img {
+    width: 72%;
+    max-height: 360px;
   }
 
   .docs-page {

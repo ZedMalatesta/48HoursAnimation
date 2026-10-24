@@ -9,7 +9,8 @@ to skip.
 
 **Civic Docs.** The eye opens a docs-style editor holding the citizen report. You can
 edit the text and use the formatting toolbar: styles, fonts, sizes, colours, alignment
-and lists. The File, Edit, View, Insert, Format, Tools and Help menus work, and edits
+and lists. Photos come from the file manager (or drag and drop, or paste) and are
+always shown at a medium size. The File, Edit, View, Insert, Format, Tools and Help menus work, and edits
 autosave to the browser. The viewer's avatar is a tiny live eye that follows your pointer
 and text caret. Visitors who prefer reduced motion skip the intro.
 

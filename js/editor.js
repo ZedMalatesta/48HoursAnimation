@@ -5,11 +5,14 @@ const MOD = MAC ? '⌘' : 'Ctrl+';
 // execCommand('fontSize') only knows the legacy sizes 1–7; these are their point sizes.
 const LEVEL_PT = [0, 7.5, 10, 12, 13.5, 18, 24, 36];
 
+// Photos are scaled down before they go into the document so autosave stays small.
+const IMAGE_MAX_SIDE = 1200;
+
 const MENUS = {
   File: [['New report', 'new'], ['Print', 'print', `${MOD}P`], ['Reboot terminal', 'replay']],
   Edit: [['Undo', 'undo', `${MOD}Z`], ['Redo', 'redo', MAC ? '⇧⌘Z' : 'Ctrl+Y'], ['Select all', 'selectAll', `${MOD}A`]],
   View: [['Zoom in', 'zoomIn'], ['Zoom out', 'zoomOut'], ['Actual size', 'zoomReset']],
-  Insert: [['Today’s date', 'date'], ['Horizontal line', 'insertHorizontalRule'], ['Link…', 'createLink']],
+  Insert: [['Image…', 'image'], ['Today’s date', 'date'], ['Horizontal line', 'insertHorizontalRule'], ['Link…', 'createLink']],
   Format: [
     ['Bold', 'bold', `${MOD}B`],
     ['Italic', 'italic', `${MOD}I`],
@@ -35,9 +38,12 @@ export function initEditor({ onReplay, onCaret }) {
   const styleSelect = toolbar.querySelector('[data-cmd="formatBlock"]');
   const fontSelect = toolbar.querySelector('[data-cmd="fontName"]');
   const toggles = toolbar.querySelectorAll('button[aria-pressed]');
+  const imageInput = document.getElementById('doc-image-input');
 
   restoreSaved();
   document.execCommand('styleWithCSS', false, true);
+  // No drag-to-resize handles (Firefox): photos always stay at the medium size.
+  document.execCommand('enableObjectResizing', false, false);
 
   // Toolbar controls steal focus, so remember the last selection inside the page and put it back.
   let savedRange = null;
@@ -97,7 +103,8 @@ export function initEditor({ onReplay, onCaret }) {
       const url = prompt('Link to', 'https://');
       if (url) exec('createLink', url);
     },
-    date: () => exec('insertText', new Date().toLocaleDateString(undefined, { dateStyle: 'long' })),
+    image: () => imageInput.click(),
+    date: () => exec('insertText',new Date().toLocaleDateString(undefined, { dateStyle: 'long' })),
     new() {
       if (!confirm('Start a blank report? The current text will be cleared.')) return;
       doc.innerHTML = '<p><br></p>';
@@ -147,6 +154,61 @@ export function initEditor({ onReplay, onCaret }) {
     if (rect) onCaret?.(rect);
   });
 
+  // Images: picked from the file manager, dropped or pasted
+
+  async function insertImages(files, range = savedRange) {
+    const images = [...files].filter(f => f.type.startsWith('image/'));
+    if (!images.length) return;
+    const html = [];
+    for (const file of images) {
+      try {
+        const img = document.createElement('img');
+        img.src = await shrinkImage(file);
+        img.alt = file.name.replace(/\.[^.]+$/, '');
+        html.push(img.outerHTML);
+      } catch {
+        toast(`Couldn’t read ${file.name}`);
+      }
+    }
+    if (!html.length) return;
+    savedRange = range ?? endOfDocument();
+    exec('insertHTML', html.join(''));
+  }
+
+  function endOfDocument() {
+    const range = document.createRange();
+    range.selectNodeContents(doc);
+    range.collapse(false);
+    return range;
+  }
+
+  function rangeAtPoint(x, y) {
+    const pos = document.caretPositionFromPoint?.(x, y);
+    if (!pos) return document.caretRangeFromPoint?.(x, y) ?? null;
+    const range = document.createRange();
+    range.setStart(pos.offsetNode, pos.offset);
+    return range;
+  }
+
+  imageInput.addEventListener('change', () => {
+    insertImages(imageInput.files);
+    imageInput.value = '';
+  });
+  doc.addEventListener('dragover', e => {
+    if (e.dataTransfer?.types.includes('Files')) e.preventDefault();
+  });
+  doc.addEventListener('drop', e => {
+    if (!e.dataTransfer?.files.length) return;
+    e.preventDefault();
+    insertImages(e.dataTransfer.files, rangeAtPoint(e.clientX, e.clientY));
+  });
+  doc.addEventListener('paste', e => {
+    const files = [...(e.clipboardData?.files ?? [])];
+    if (!files.some(f => f.type.startsWith('image/'))) return;
+    e.preventDefault();
+    insertImages(files);
+  });
+
   // Saving
 
   let saveTimer;
@@ -162,8 +224,10 @@ export function initEditor({ onReplay, onCaret }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ title: title.value, html: doc.innerHTML }));
       status.textContent = 'Saved to this device';
-    } catch {
-      status.textContent = 'Not saved: storage unavailable';
+    } catch (error) {
+      status.textContent = error?.name === 'QuotaExceededError'
+        ? 'Not saved: too many images for this device'
+        : 'Not saved: storage unavailable';
     }
   }
 
@@ -295,4 +359,24 @@ export function initEditor({ onReplay, onCaret }) {
   }
 
   return { doc };
+}
+
+/** Decodes an image file and returns it as a data URL no larger than IMAGE_MAX_SIDE on either side. */
+async function shrinkImage(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const scale = Math.min(1, IMAGE_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.naturalWidth * scale);
+    canvas.height = Math.round(img.naturalHeight * scale);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    // Keep PNG for formats that may carry transparency; photos become JPEG.
+    const keepsAlpha = /png|gif|webp|svg/.test(file.type);
+    return canvas.toDataURL(keepsAlpha ? 'image/png' : 'image/jpeg', 0.85);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }

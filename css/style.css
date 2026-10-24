@@ -138,3 +138,82 @@ body {
   width: min(100%, 820px);
   margin: clamp(20px, 5vw, 44px) auto 0;
 }
+
+/* The eye (SVG built by js/eye.js) ---------------------------------------- */
+
+.eye {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.eye__lid {
+  fill: var(--ink);
+}
+
+.eye__outline {
+  fill: none;
+  stroke: var(--yellow);
+  stroke-width: 8;
+  stroke-linejoin: round;
+}
+
+.eye__tick {
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+
+.eye__label {
+  fill: #fff;
+  font: 700 15px var(--mono);
+  letter-spacing: 0.04em;
+  dominant-baseline: central;
+}
+
+.eye__ring {
+  fill: var(--cream);
+}
+
+.eye__iris {
+  fill: var(--yellow);
+}
+
+.eye__iris-core {
+  fill: var(--amber);
+}
+
+.eye__fibres {
+  stroke: var(--fibre);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.eye__pupil {
+  fill: var(--ink);
+}
+
+.eye__glint {
+  fill: #dcdadc;
+}
+
+.eye__scan {
+  fill: var(--yellow);
+}
+
+.eye__scan-glow {
+  opacity: 0.18;
+}
+
+/* Labels get bigger on phones so they stay readable; the side ticks make room. */
+@media (max-width: 560px) {
+  .eye__label {
+    font-size: 24px;
+  }
+
+  .eye__tick--h {
+    display: none;
+  }
+}

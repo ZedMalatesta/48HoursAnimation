@@ -566,10 +566,14 @@ body {
 }
 
 .docs-page {
+  --margin: 96px;
+  --text-height: calc(1056px - 2 * var(--margin));
+  --photo-width: 50%;
+  --photo-height: 420px;
   width: min(100%, 816px);
   min-height: 1056px;
   margin: 0 auto;
-  padding: 96px;
+  padding: var(--margin);
   background: #fff;
   color: #000;
   font: 14.67px/1.5 Arial, Helvetica, sans-serif;
@@ -630,13 +634,16 @@ body {
   text-align: right;
 }
 
-/* Every photo gets the same medium box: half the page wide, never the full width.
-   Tall photos are capped in height and keep their shape inside the box. */
+/* Every photo gets the same medium box: half the text width, never the full page.
+   It is never wider or taller than the page's text area (the page inside its margins)
+   nor taller than the screen; tall photos keep their shape inside the box. */
 .docs-page img {
   display: block;
-  width: 50%;
+  width: var(--photo-width);
+  max-width: 100%;
   height: auto;
-  max-height: 420px;
+  max-height: min(var(--photo-height), var(--text-height), calc(100vh - 160px));
+  max-height: min(var(--photo-height), var(--text-height), calc(100dvh - 160px));
   margin: 0.6em 0;
   object-fit: contain;
   object-position: left center;
@@ -665,7 +672,8 @@ body {
 
 @media (max-width: 900px) {
   .docs-page {
-    padding: 56px 48px;
+    --margin: 56px;
+    padding: var(--margin) 48px;
   }
 }
 
@@ -696,12 +704,10 @@ body {
     padding: 0;
   }
 
-  .docs-page img {
-    width: 72%;
-    max-height: 360px;
-  }
-
   .docs-page {
+    --text-height: 360px;
+    --photo-width: 72%;
+    --photo-height: 360px;
     width: 100%;
     min-height: 0;
     padding: 24px max(20px, env(safe-area-inset-left)) calc(56px + env(safe-area-inset-bottom));

@@ -1,0 +1,140 @@
+/* ==========================================================================
+   Unified Civic Authority — See It. Report It.
+   ========================================================================== */
+
+:root {
+  --ink: #0b0a0c;
+  --red: #9b100e;
+  --red-deep: #7c0b0a;
+  --yellow: #ffb83d;
+  --amber: #d9731c;
+  --fibre: #7a3a0e;
+  --cream: #ecdfc6;
+  --paper: #ece6de;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Courier Prime", "Courier New", Courier, monospace;
+  --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #110606;
+  color: #fff;
+  font-family: var(--sans);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Masthead ---------------------------------------------------------------- */
+
+.masthead {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 24px;
+  padding: max(16px, env(safe-area-inset-top)) var(--gutter) 16px;
+  background: #0b0b0c;
+  text-transform: uppercase;
+}
+
+.masthead__title {
+  margin-right: -0.28em;
+  font-weight: 800;
+  font-size: clamp(0.85rem, 2.6vw, 1.35rem);
+  letter-spacing: 0.28em;
+}
+
+.masthead__bureau {
+  margin-right: -0.18em;
+  color: var(--yellow);
+  font-weight: 700;
+  font-size: clamp(0.6rem, 1.6vw, 0.8rem);
+  letter-spacing: 0.18em;
+}
+
+@media (max-width: 560px) {
+  .masthead {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Hero: sunburst, slogan and the eye ------------------------------------- */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(28px, 6vw, 56px) var(--gutter) clamp(48px, 9vw, 96px);
+  background: var(--red);
+  text-align: center;
+}
+
+/* Vignette over the rays, under the content. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 60%, transparent 45%, rgb(0 0 0 / 0.28) 100%);
+  pointer-events: none;
+}
+
+/* Centred on the eye so the rays always burst out of the pupil. */
+.rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 150vmax;
+  height: 150vmax;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(
+    from -3.75deg,
+    var(--red-deep) 0deg 7.2deg,
+    transparent 7.5deg 22.2deg,
+    var(--red-deep) 22.5deg
+  );
+  pointer-events: none;
+}
+
+.slogan {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-weight: 900;
+  font-size: clamp(3rem, 12.8vw, 7.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+.slogan span {
+  display: block;
+}
+
+.slogan__report {
+  color: var(--yellow);
+}
+
+.hero__eye {
+  position: relative;
+  width: min(100%, 820px);
+  margin: clamp(20px, 5vw, 44px) auto 0;
+}

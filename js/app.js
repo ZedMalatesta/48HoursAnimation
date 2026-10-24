@@ -3,6 +3,10 @@ import { playIntro } from './intro.js';
 import { Timeline, clamp, ease, lerp } from './motion.js';
 
 const RATING = 412;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// The intro reveals from the eye, so always start a (re)load at the top.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 const boot = document.getElementById('boot');
 const app = document.getElementById('app');
@@ -10,11 +14,25 @@ const posterEye = createEye(document.getElementById('poster-eye'));
 posterEye.set({ open: 0 });
 posterEye.label(ratingLabel(0), 'ID: SCANNING');
 
+document.getElementById('replay').addEventListener('click', () => {
+  scrollTo(0, 0);
+  location.reload();
+});
+
 start();
 
 async function start() {
-  await playIntro(boot, RATING);
-  await openApp();
+  if (reducedMotion) {
+    boot.remove();
+    document.body.classList.remove('is-booting');
+    document.body.classList.add('is-live');
+    posterEye.set({ open: 1 });
+    posterEye.label(ratingLabel(RATING));
+    trackEye(posterEye, { idle: false });
+  } else {
+    await playIntro(boot, RATING);
+    await openApp();
+  }
   watchReveals();
 }
 
@@ -141,6 +159,7 @@ function watchReveals() {
 }
 
 function countUp(el) {
+  if (reducedMotion) return;
   const to = Number(el.dataset.count);
   new Timeline().tween(900, p => { el.textContent = `+${Math.round(to * p)} rating`; }, ease.outCubic);
 }

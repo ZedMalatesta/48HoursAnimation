@@ -414,6 +414,14 @@ body {
   overflow: hidden;
 }
 
+/* Landscape phones: a smaller eye, lifted clear of the status block. */
+@media (max-height: 500px) {
+  .boot__stage {
+    width: min(86vw, 72vh);
+    margin-bottom: 100px;
+  }
+}
+
 @keyframes cursor {
   50% {
     opacity: 0;
@@ -536,4 +544,37 @@ body {
 .js [data-reveal].is-in {
   opacity: 1;
   transform: none;
+}
+
+.replay {
+  margin-top: 28px;
+  padding: 10px 16px;
+  border: 1px solid rgb(255 184 61 / 0.4);
+  border-radius: 2px;
+  background: none;
+  color: var(--yellow);
+  font: 700 0.72rem var(--mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.replay:hover,
+.replay:focus-visible {
+  border-color: var(--yellow);
+  background: rgb(255 184 61 / 0.1);
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
 }

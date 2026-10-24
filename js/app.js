@@ -1,5 +1,7 @@
+import { initEditor } from './editor.js';
 import { createEye } from './eye.js';
 import { playIntro } from './intro.js';
+import { watch } from './watch.js';
 
 const RATING = 412;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9,7 +11,22 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 const boot = document.getElementById('boot');
 const app = document.getElementById('app');
-const avatarEye = createEye(document.getElementById('avatar-eye'));
+
+// The viewer's avatar is the eye itself, following the pointer and the text caret.
+const watcher = watch(createEye(document.getElementById('avatar-eye')), {
+  idle: !reducedMotion,
+  awake: reducedMotion,
+});
+
+const { doc } = initEditor({
+  onReplay() {
+    scrollTo(0, 0);
+    location.reload();
+  },
+  onCaret(rect) {
+    watcher.aimAt(rect.left, rect.top + rect.height / 2);
+  },
+});
 
 start();
 
@@ -46,7 +63,19 @@ async function openApp() {
   boot.classList.add('is-under');
   document.body.classList.remove('is-booting');
   document.body.classList.add('is-live');
+  loadDocument();
+  watcher.wake(1300);
 
   await opening.finished;
   boot.remove();
+}
+
+// Once the page has slid up, its blocks appear one after another as if the document were loading.
+function loadDocument() {
+  [...doc.children].slice(0, 20).forEach((block, i) => {
+    block.animate(
+      [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 500, delay: 800 + i * 60, easing: 'ease-out', fill: 'backwards' },
+    );
+  });
 }

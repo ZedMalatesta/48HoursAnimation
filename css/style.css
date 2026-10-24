@@ -31,7 +31,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: #110606;
+  background: #170808;
   color: #fff;
   font-family: var(--sans);
   overflow-x: clip;
@@ -216,4 +216,89 @@ body {
   .eye__tick--h {
     display: none;
   }
+}
+
+/* Rise: rewards table ------------------------------------------------------ */
+
+.rise {
+  position: relative;
+  padding: clamp(24px, 5vw, 44px) var(--gutter) calc(clamp(32px, 6vw, 56px) + env(safe-area-inset-bottom));
+  border-top: 6px solid var(--yellow);
+  background: linear-gradient(#0c0505, #170808);
+  text-align: center;
+}
+
+.rise__title {
+  margin: 0;
+  font-weight: 900;
+  font-size: clamp(3.4rem, 13vw, 7rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.rise__tagline {
+  margin: 10px -0.32em clamp(18px, 3.5vw, 28px) 0;
+  color: var(--yellow);
+  font-weight: 800;
+  font-size: clamp(0.72rem, 2.3vw, 1.1rem);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.rewards {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.reward {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0 7px;
+  border-bottom: 1px dashed rgb(255 255 255 / 0.22);
+}
+
+.reward__what {
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: clamp(0.8rem, 2vw, 0.98rem);
+  letter-spacing: 0.02em;
+}
+
+.reward__value {
+  flex: none;
+  color: var(--yellow);
+  font-weight: 800;
+  font-size: clamp(1rem, 2.6vw, 1.35rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.rise__how,
+.rise__ascend {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(0.62rem, 1.7vw, 0.82rem);
+  line-height: 1.6;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.rise__how {
+  margin-top: 22px;
+}
+
+.rise__how span {
+  padding: 0 0.6em;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.rise__ascend {
+  margin-top: 10px;
+  color: var(--yellow);
 }
